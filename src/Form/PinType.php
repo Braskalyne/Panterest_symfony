@@ -3,9 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Pin;
-use Doctrine\DBAL\Types\TextType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -23,8 +21,8 @@ class PinType extends AbstractType
                 'download_uri' => false,
                 'imagine_pattern' => 'squared_thumbnail_small'
             ])
-            ->add('title', TextType::class)
-            ->add('description', TextareaType::class)
+            ->add('title')
+            ->add('description')
         ;
     }
 
