@@ -1,0 +1,16 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title 'Profile' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+            <h1 class="my-5">Profile</h1>
+            <img class="img-thumbnail" src="{{('build/images/button.png') }}"/>
+            <p class="lead">{{ app.user.email }}</p>
+            <h2>{{ app.user.fullName }}</h2>
+
+            <p><a href="">Edit Account</a> | <a href="">Change Password</a></p>
+        </div>
+    </div>
+{% endblock %}

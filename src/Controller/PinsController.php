@@ -22,7 +22,7 @@ class PinsController extends AbstractController
     {
         $pins = $pinRepository->findBy([], ['createdAt' => 'DESC']);
 
-        return $this->render('pins/index.html.twig', compact('pins'));
+        return $this->render('pins/show.html.twig', compact('pins'));
     }
 
     /**
