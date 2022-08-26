@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 
 class PinsController extends AbstractController
@@ -27,18 +28,10 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/create", name="app_pins_create", methods="GET|POST")
+     * @Security("is_granted('ROLE_USER') && user.isVerified() == true")
      */
     public function create(Request $request, EntityManagerInterface $em, UserRepository $userRepo): Response
     {
-        if (! $this->getUser()) {
-            $this->addFlash('error', 'You need to log in first');
-            return $this->redirectToRoute('app_login');
-        }
-
-        if (! $this->getUser()->isVerified()) {
-            $this->addFlash('error', 'You need to have a verified account!');
-            return $this->redirectToRoute('app_home');
-        }
 
         $pin = new Pin;
 
@@ -73,18 +66,10 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/{id<[0-9]+>}/edit", name="app_pins_edit", methods="GET|PUT")
+     * @Security("is_granted('ROLE_USER') && user.isVerified() == true && pin.getUser() == user")
      */
     public function edit(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
-        if (! $this->getUser()) {
-            $this->addFlash('error', 'You need to log in first');
-            return $this->redirectToRoute('app_login');
-        }
-
-        if (! $this->getUser()->isVerified()) {
-            $this->addFlash('error', 'You need to have a verified account!');
-            return $this->redirectToRoute('app_home');
-        }
 
         if ($pin->getUser() != $this->getUser()) {
             $this->addFlash('error', 'Access Forbidden');
@@ -113,21 +98,12 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/{id<[0-9]+>}", name="app_pins_delete", methods={"DELETE"})
+     * @Security("is_granted('ROLE_USER') && user.isVerified() == true && pin.getUser() == user")
      */
     public function delete(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
-        if (! $this->getUser()) {
-            $this->addFlash('error', 'You need to log in first');
-            return $this->redirectToRoute('app_login');
-        }
-
-        if (! $this->getUser()->isVerified()) {
-            $this->addFlash('error', 'You need to have a verified account!');
-            return $this->redirectToRoute('app_home');
-        }
         if ($pin->getUser() != $this->getUser()) {
-            $this->addFlash('error', 'Access Forbidden');
-            return $this->redirectToRoute('app_home');
+            throw $this->createAccessDeniedException();
         }
 
         if ($this->isCsrfTokenValid('pin_deletion_' . $pin->getId(), $request->request->get('csrf_token'))) {
