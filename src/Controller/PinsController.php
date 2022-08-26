@@ -30,6 +30,16 @@ class PinsController extends AbstractController
      */
     public function create(Request $request, EntityManagerInterface $em, UserRepository $userRepo): Response
     {
+        if (! $this->getUser()) {
+            $this->addFlash('error', 'You need to log in first');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (! $this->getUser()->isVerified()) {
+            $this->addFlash('error', 'You need to have a verified account!');
+            return $this->redirectToRoute('app_home');
+        }
+
         $pin = new Pin;
 
         $form = $this->createForm(PinType::class, $pin);
@@ -66,6 +76,21 @@ class PinsController extends AbstractController
      */
     public function edit(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
+        if (! $this->getUser()) {
+            $this->addFlash('error', 'You need to log in first');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (! $this->getUser()->isVerified()) {
+            $this->addFlash('error', 'You need to have a verified account!');
+            return $this->redirectToRoute('app_home');
+        }
+
+        if ($pin->getUser() != $this->getUser()) {
+            $this->addFlash('error', 'Access Forbidden');
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(PinType::class, $pin, [
         'method' => 'PUT'
     ]);
@@ -91,6 +116,20 @@ class PinsController extends AbstractController
      */
     public function delete(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
+        if (! $this->getUser()) {
+            $this->addFlash('error', 'You need to log in first');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (! $this->getUser()->isVerified()) {
+            $this->addFlash('error', 'You need to have a verified account!');
+            return $this->redirectToRoute('app_home');
+        }
+        if ($pin->getUser() != $this->getUser()) {
+            $this->addFlash('error', 'Access Forbidden');
+            return $this->redirectToRoute('app_home');
+        }
+
         if ($this->isCsrfTokenValid('pin_deletion_' . $pin->getId(), $request->request->get('csrf_token'))) {
             $em->remove($pin);
             $em->flush();
