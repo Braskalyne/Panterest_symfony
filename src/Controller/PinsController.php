@@ -28,7 +28,7 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/create", name="app_pins_create", methods="GET|POST")
-     * @Security("is_granted('ROLE_USER') && user.isVerified() == true")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function create(Request $request, EntityManagerInterface $em, UserRepository $userRepo): Response
     {
@@ -66,7 +66,7 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/{id<[0-9]+>}/edit", name="app_pins_edit", methods="GET|PUT")
-     * @Security("is_granted('ROLE_USER') && user.isVerified() == true && pin.getUser() == user")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function edit(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
@@ -98,7 +98,7 @@ class PinsController extends AbstractController
 
     /**
      * @Route("/pins/{id<[0-9]+>}", name="app_pins_delete", methods={"DELETE"})
-     * @Security("is_granted('ROLE_USER') && user.isVerified() == true && pin.getUser() == user")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function delete(Request $request, EntityManagerInterface $em, Pin $pin): Response
     {
